@@ -32,7 +32,7 @@ public class JoinService {
 			}
 			
 			// 가입하려고 하는 id가 없으면 MemberDao 객체의 insert() 메서드를 이용해서 DB에 새로운 유저의 정보를 저장함
-			memberDao.insert(conn, new Member(member.getId(), member.getName(), member.getPassword(), new Date()));
+			memberDao.insert(conn, new Member(joinReq.getId(), joinReq.getName(), joinReq.getPassword(), new Date()));
 			// DB에 정보 저장을 성공했을 경우 commit시킴!
 			conn.commit();
 		} catch (SQLException e) {

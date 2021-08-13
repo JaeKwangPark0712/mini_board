@@ -19,6 +19,7 @@ public class MemberDao {
 		try {
 			// 유저의 id로 유저의 정보를 얻어는 쿼리문
 			pstmt = conn.prepareStatement("select * from member where memberid = ?");
+			pstmt.setString(1, id);
 			// 얻어온 유저의 정보를 ResultSet에 저장
 			rs = pstmt.executeQuery();
 			Member member  = null;
