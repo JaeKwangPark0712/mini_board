@@ -1,5 +1,6 @@
 package member.command;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class ChangePasswordHandler implements CommandHandler{
 		return FORM_VIEW;
 	}
 
-	private String processSubmit(HttpServletRequest request, HttpServletResponse response) {
+	private String processSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// request 객체에서 얻어온 Session에서 authUser 속성을 얻어옴
 		User user = (User) request.getSession().getAttribute("authUser");
 		
