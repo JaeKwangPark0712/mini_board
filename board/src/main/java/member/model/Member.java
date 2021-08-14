@@ -40,4 +40,9 @@ public class Member {// 회원의 데이터를 담는 자바빈 클래스
 	public boolean matchPassword(String pwd) {
 		return password.equals(pwd);
 	}
+	
+	// 비밀번호를 변경할 때 사용하는 메서드
+	public void changePassword(String newPwd) {
+		this.password = newPwd;
+	}
 }
