@@ -6,9 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import article.model.Article;
+import article.model.Writer;
 import jdbc.JdbcUtil;
 
 public class ArticleDao {// 게시글 정보 관련한 쿼리문을 다루는 DAO 클래스
@@ -56,5 +59,65 @@ public class ArticleDao {// 게시글 정보 관련한 쿼리문을 다루는 DA
 	// Date 객체를 Timestamp 객체로 바꿔주는 메서드!
 	private Timestamp toTimestamp(Date date) {
 		return new Timestamp(date.getTime());
+	}
+	
+	// 게시글 전체 수를 반환하는 쿼리문
+	public int selectCount(Connection conn) throws SQLException {
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.createStatement();
+			// 게시글 전체 수를 반환하는 쿼리문
+			rs = stmt.executeQuery("select count(*) frim article");
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+			// 게시글을 못 불러왔을 경우(혹은 게시글이 없을 경우?) 0을 반환
+			return 0;
+		} finally {
+			// 메모리 확보를 위해 사용한 자원 닫아주기!
+			JdbcUtil.close(rs);
+			JdbcUtil.close(stmt);
+		}
+	}
+	
+	// 지정한 범위의 전체 게시글을 불러들이는 쿼리문
+	public List<Article> select(Connection conn, int startRow, int size) throws SQLException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			// 지정한 범위의 전체 게시글을 불러들이는 쿼리문(ROWNUM 활용!)
+			pstmt=conn.prepareStatement("select * from "
+					+ "(select ROWNUM rnum,article_no,writer_id,"
+					+ "writer_name,title,regdate,moddate,read_cnt from "
+					+ "(SELECT * from article ORDER by article_no desc) "
+					+ "where rownum<=?) where rnum>=?");
+			// 시작점은 입력 받은 지점!, 끝나는 부분은 시작점에서 size 만큼 더한 게시글 번호까지!
+			pstmt.setInt(1, startRow + size);
+			pstmt.setInt(2, startRow);
+			rs = pstmt.executeQuery();
+			// 지정한 범위 내의 게시글 정보 전부를 담을 ArrayList 객체 생성
+			List<Article> result = new ArrayList<>();
+			
+			while(rs.next()) {
+				//ResultSet 의 내용을 Article로 변환하여 ArrayList에 추가!
+				result.add(convertArticle(rs));
+			}
+			// 게시글을 모아둔 List 반환
+			return result;
+		} finally {
+			JdbcUtil.close(rs);
+			JdbcUtil.close(pstmt);
+		}
+	}
+
+	// ResultSet 의 내용을 Article로 변환하는 메서드
+	private Article convertArticle(ResultSet rs) throws SQLException {
+		return new Article(rs.getInt("article_no"), new Writer(rs.getString("writer_id"), rs.getString("writer_name")),
+				rs.getString("title"), toDate(rs.getTimestamp("regdate")), toDate(rs.getTimestamp("moddate")), rs.getInt("read_cnt"));
+	}
+	// Timestamp를 Date로 변환하는 메서드
+	private Date toDate(Timestamp timestamp) {
+		return new Date(timestamp.getTime());
 	}
 }
