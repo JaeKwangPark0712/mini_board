@@ -1,0 +1,60 @@
+package article.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Date;
+
+import article.model.Article;
+import jdbc.JdbcUtil;
+
+public class ArticleDao {// 게시글 정보 관련한 쿼리문을 다루는 DAO 클래스
+	
+	//게시글을 작성할 때 사용하는 쿼리문
+	public Article insert(Connection conn, Article article) throws SQLException {
+		PreparedStatement pstmt = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			// insert 쿼리문 작성하여 PreparedStatement 생성!
+			// num_seq.nextVal : 시퀀스에서 다음 값을 자동으로 불러오기 위해 사용!
+			// 게시글의 조회수는 0으로 초기화
+			pstmt = conn.prepareStatement("insert into article values(num_seq.nextVal, ?, ?, ?, ?, ?, 0)");
+			// pstmt의 set 함수로 각각의 쿼리문에 Article 객체에서 얻어온 정보들 삽입
+			pstmt.setString(1, article.getWtier().getId());
+			pstmt.setString(2, article.getWtier().getName());
+			pstmt.setString(3, article.getTitle());
+			pstmt.setTimestamp(4, toTimestamp(article.getRegDate()));
+			pstmt.setTimestamp(5, toTimestamp(article.getModifiedDate()));
+			// executeUpdate() : 쿼리문에서 변경된 자료의 수를 반환하는 함수
+			int insertedCount = pstmt.executeUpdate();
+			// 정상적으로 쿼리문이 실행됐을 경우(데이터 저장에 성공했을 경우)
+			if(insertedCount > 0) {
+				stmt = conn.createStatement();
+				// Statement 에서 쿼리문을 실행(가장 최근에 저장된 글 번호를 불러움)
+				rs = stmt.executeQuery("select max(article_no) from article");
+				if(rs.next()) {
+					// 쿼리에서 얻어온 글 번호를 저장
+					Integer newNum = rs.getInt(1);
+					// 글 번호 정보를 포함한 새로운 Article 객체 반환!
+					return new Article(newNum, article.getWtier(), article.getTitle(), article.getRegDate(), article.getModifiedDate(), 0);
+				}
+			}
+			// insert 쿼리문이 정상적으로 실행되지 않았을 경우(데이터 저장에 실패했을 경우) null값 반환
+			return null;
+		} finally {
+			// 메모리 확보를 위해 사용한 자원 닫아주기!
+			JdbcUtil.close(rs);
+			JdbcUtil.close(stmt);
+			JdbcUtil.close(pstmt);
+		}
+	}
+	
+	// Date 객체를 Timestamp 객체로 바꿔주는 메서드!
+	private Timestamp toTimestamp(Date date) {
+		return new Timestamp(date.getTime());
+	}
+}
