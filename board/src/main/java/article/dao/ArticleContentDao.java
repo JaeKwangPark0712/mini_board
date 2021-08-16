@@ -55,4 +55,14 @@ public class ArticleContentDao {
 			JdbcUtil.close(rs);
 		}
 	}
+	
+	// 게시글 번호로 게시글 정보를 불러와 게시글의 내용을 수정하는 메서드
+	public int update(Connection conn, int no, String content) throws SQLException {
+		// 게시글 번호로 게시글 정보를 불러와 게시글의 내용을 수정하는 쿼리문
+		try(PreparedStatement pstmt = conn.prepareStatement("update article_content set content = ? where article_no = ?")) {
+			pstmt.setString(1, content);
+			pstmt.setInt(2, no);
+			return pstmt.executeUpdate();
+		}
+	}
 }
