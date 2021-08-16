@@ -65,4 +65,12 @@ public class ArticleContentDao {
 			return pstmt.executeUpdate();
 		}
 	}
+	
+	// 글 번호로 특정 게시글을 불러와, 해당 게시글을 제거하는 메서드
+	public int delete(Connection conn, int no) throws SQLException {
+		try(PreparedStatement pstmt = conn.prepareStatement("delete from article_content where article_no = ?")) {
+			pstmt.setInt(1, no);
+			return pstmt.executeUpdate();
+		}
+	}
 }
