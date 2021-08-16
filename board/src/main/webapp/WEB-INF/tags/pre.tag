@@ -8,6 +8,6 @@
 	value = value.replace("<", "&lt;");
 	value = value.replace("\n", "\n<br/>");
 	value = value.replace("&", "&amp;");
-	value = value.replace(" ", "&dbsp;");
+	value = value.replace(" ", "&nbsp;");
 %>
 <%= value %>
