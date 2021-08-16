@@ -25,7 +25,7 @@ public class JoinHandler implements CommandHandler{
 		if(request.getMethod().equalsIgnoreCase("GET")) {
 			return processForm(request, response);
 		}
-		// 회원가입 페이지에서 POST 방식으로 요청이 올 경우 prpcessSubmit 실행
+		// 회원가입 페이지에서 POST 방식으로 요청이 올 경우 processSubmit 실행
 		else if(request.getMethod().equalsIgnoreCase("POST")) {
 			return processSubmit(request, response);
 		}
