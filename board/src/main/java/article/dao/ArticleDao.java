@@ -106,6 +106,7 @@ public class ArticleDao {// 게시글 정보 관련한 쿼리문을 다루는 DA
 			// 게시글을 모아둔 List 반환
 			return result;
 		} finally {
+			// 메모리 확보를 위해 사용한 자원 닫아주기!
 			JdbcUtil.close(rs);
 			JdbcUtil.close(pstmt);
 		}
@@ -119,5 +120,38 @@ public class ArticleDao {// 게시글 정보 관련한 쿼리문을 다루는 DA
 	// Timestamp를 Date로 변환하는 메서드
 	private Date toDate(Timestamp timestamp) {
 		return new Date(timestamp.getTime());
+	}
+	
+	// 게시글 번호로 특정 게시글 정보를 불러오는 메서드
+	public Article selectById(Connection conn, int no) throws SQLException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			// 게시글 번호로 특정 게시글 정보를 불러오는 쿼리문
+			pstmt = conn.prepareStatement("select * from article where article_no = ?");
+			// 입력받은 게시글 번호를 쿼리문에 세팅
+			pstmt.setInt(1, no);
+			// ResultSet에 받아온 게시글 정보 저장
+			rs = pstmt.executeQuery();
+			Article article = null;
+			if(rs.next()) {
+				//116 행에서 만든 메서드 재활용!
+				article = convertArticle(rs);
+			}
+			return article;
+		} finally {
+			// 메모리 확보를 위해 사용한 자원 닫아주기!
+			JdbcUtil.close(rs);
+			JdbcUtil.close(pstmt);
+		}
+	}
+	
+	// 게시글의 조회수를 1 증가시키는 메서드
+	public void increaseReadCount(Connection conn, int no) throws SQLException {
+		// 게시글 번호로 특정 게시글 정보를 불러와 조회수를 1 증가시키는 쿼리문
+		try(PreparedStatement pstmt = conn.prepareStatement("update article set read_cnt = read_cnt + 1 where article_no = ?")) {
+			pstmt.setInt(1, no);
+			pstmt.executeUpdate();
+		}
 	}
 }

@@ -2,6 +2,7 @@ package article.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import article.model.ArticleContent;
@@ -28,7 +29,30 @@ public class ArticleContentDao {
 				return null;
 			}
 		} finally {
+			// 메모리 확보를 위해 사용한 자원 닫아주기!
 			JdbcUtil.close(pstmt);
+		}
+	}
+	
+	// 게시글 번호로 특정 게시글의 내용을 불러오는 메서드
+	public ArticleContent selectById(Connection conn, int no) throws SQLException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			// 게시글 번호로 특정 게시글의 내용을 불러오는 쿼리문
+			pstmt = conn.prepareStatement("select * from article_content where article_no = ?");
+			pstmt.setInt(1, no);
+			// ResultSet에 받아온 게시글 내용 저장
+			rs = pstmt.executeQuery();
+			ArticleContent content = null;
+			if(rs.next()) {
+				// 받아온 게시글 정보를 갖고 새로운 ArticleContent 객체 생성
+				content = new ArticleContent(rs.getInt("article_no"), rs.getString("content"));
+			}
+			return content;
+		} finally {
+			// 메모리 확보를 위해 사용한 자원 닫아주기!
+			JdbcUtil.close(rs);
 		}
 	}
 }
