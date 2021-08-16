@@ -41,6 +41,7 @@ public class ArticlePage {// 시작페이지, 마지막페이지, 총 페이지 
 			// 마지막 페이지 = 시작 페이지 + 4
 			endPage = startPage + 4;
 			// 마지막 페이지가 전체 페이지보다 클 경우, 전체 페이지 수를 마지막 페이지로 지정
+			if(endPage > totalPages) { endPage = totalPages; }
 		}
 	}
 	
@@ -75,7 +76,7 @@ public class ArticlePage {// 시작페이지, 마지막페이지, 총 페이지 
 	}
 	
 	// 게시글이 하나 이상 있는지 확인하는 메서드
-	public boolean hasArticle() {
+	public boolean hasArticles() {
 		return total > 0;
 	}
 }

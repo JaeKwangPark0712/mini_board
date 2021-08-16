@@ -27,8 +27,8 @@ public class ArticleDao {// 게시글 정보 관련한 쿼리문을 다루는 DA
 			// 게시글의 조회수는 0으로 초기화
 			pstmt = conn.prepareStatement("insert into article values(num_seq.nextVal, ?, ?, ?, ?, ?, 0)");
 			// pstmt의 set 함수로 각각의 쿼리문에 Article 객체에서 얻어온 정보들 삽입
-			pstmt.setString(1, article.getWtier().getId());
-			pstmt.setString(2, article.getWtier().getName());
+			pstmt.setString(1, article.getWriter().getId());
+			pstmt.setString(2, article.getWriter().getName());
 			pstmt.setString(3, article.getTitle());
 			pstmt.setTimestamp(4, toTimestamp(article.getRegDate()));
 			pstmt.setTimestamp(5, toTimestamp(article.getModifiedDate()));
@@ -43,7 +43,7 @@ public class ArticleDao {// 게시글 정보 관련한 쿼리문을 다루는 DA
 					// 쿼리에서 얻어온 글 번호를 저장
 					Integer newNum = rs.getInt(1);
 					// 글 번호 정보를 포함한 새로운 Article 객체 반환!
-					return new Article(newNum, article.getWtier(), article.getTitle(), article.getRegDate(), article.getModifiedDate(), 0);
+					return new Article(newNum, article.getWriter(), article.getTitle(), article.getRegDate(), article.getModifiedDate(), 0);
 				}
 			}
 			// insert 쿼리문이 정상적으로 실행되지 않았을 경우(데이터 저장에 실패했을 경우) null값 반환
@@ -68,7 +68,7 @@ public class ArticleDao {// 게시글 정보 관련한 쿼리문을 다루는 DA
 		try {
 			stmt = conn.createStatement();
 			// 게시글 전체 수를 반환하는 쿼리문
-			rs = stmt.executeQuery("select count(*) frim article");
+			rs = stmt.executeQuery("select count(*) from article");
 			if(rs.next()) {
 				return rs.getInt(1);
 			}

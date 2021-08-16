@@ -6,7 +6,7 @@ public class Article { // 게시글 정보를 담는 클래스
 	
 	// 멤버 필드
 	private Integer number;
-	private Writer wtier;
+	private Writer writer;
 	private String title;
 	private Date regDate;
 	private Date modifiedDate;
@@ -16,7 +16,7 @@ public class Article { // 게시글 정보를 담는 클래스
 	public Article(Integer number, Writer wtier, String title, Date regDate, Date modifiedDate, int readCount) {
 		super();
 		this.number = number;
-		this.wtier = wtier;
+		this.writer = wtier;
 		this.title = title;
 		this.regDate = regDate;
 		this.modifiedDate = modifiedDate;
@@ -28,8 +28,8 @@ public class Article { // 게시글 정보를 담는 클래스
 		return number;
 	}
 
-	public Writer getWtier() {
-		return wtier;
+	public Writer getWriter() {
+		return writer;
 	}
 
 	public String getTitle() {
