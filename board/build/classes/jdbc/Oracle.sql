@@ -32,3 +32,5 @@ create table article_content (
 
 select * from article;
 select * from article_content;
+
+select count(*) from article;
