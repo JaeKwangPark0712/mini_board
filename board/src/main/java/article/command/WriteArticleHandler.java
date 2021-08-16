@@ -12,7 +12,7 @@ import article.service.WriteRequest;
 import auth.service.User;
 import mvc.command.CommandHandler;
 
-public class ArticleHandler implements CommandHandler{// 공통 인터페이스를 상속받는 Handler 클래스
+public class WriteArticleHandler implements CommandHandler{// 공통 인터페이스를 상속받는 Handler 클래스
 	
 	// 게시글 작성 폼 화면 경로를 상수로 지정
 	private static final String FORM_VIEW = "/WEB-INF/view/newArticleForm.jsp";
